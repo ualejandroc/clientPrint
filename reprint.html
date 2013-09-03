@@ -1,0 +1,379 @@
+<html class=" js no-flexbox canvas canvastext no-webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize no-borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"><head>
+
+    <meta charset="utf-8">
+    <title>Caja 3G</title>
+    
+    
+    
+   
+    <link href="/Content/megamenu.css" rel="stylesheet" type="text/css">
+    
+    
+    <link href="/Content/themes/custom-theme/jquery-ui-1.9.1.custom.min.css" rel="stylesheet" type="text/css">
+
+    <link href="/Content/ui.jqgrid.css" rel="stylesheet" type="text/css">
+
+
+    <link href="/Content/Site.css" rel="stylesheet" type="text/css">    
+    
+    
+    
+    <script src="/Scripts/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery-ui-1.9.1.custom.min.js" type="text/javascript"></script>
+    
+    
+    
+    
+    <script src="/Scripts/modernizr-1.7.min.js" type="text/javascript"></script>
+    
+    
+    <script src="/Scripts/bootstrap-twipsy.js" type="text/javascript"></script>
+    <script src="/Scripts/bootstrap-popover.js" type="text/javascript"></script>
+    
+    
+    <script src="/Scripts/jquery.validate.js" type="text/javascript"></script>
+    <script src="/Scripts/custom-validation.js" type="text/javascript"></script>
+
+    
+    <script src="/Scripts/jquery.maskedinput-1.3.js" type="text/javascript"></script>
+    
+    
+    <script src="/Scripts/i18n/grid.locale-es.js" type="text/javascript"></script>
+    <script src="/Scripts/jquery.jqGrid.min.js" type="text/javascript"></script>
+    
+    
+    
+
+    
+    <script src="/Scripts/jquery.numeric.js" type="text/javascript"></script> 
+    
+    
+    <script src="/Scripts/jquery.currency.js" type="text/javascript"></script> 
+    
+    
+    <script src="/Scripts/util-general.js" type="text/javascript"></script>
+    
+    <script src="/Scripts/jquery.ui.datepicker.validation.js" type="text/javascript"></script>
+    
+    
+    
+    <script src="/Scripts/jquery.rc4.js" type="text/javascript"></script>
+    
+        
+    
+    <script src="/Scripts/jquery.qtip-1.0.0-rc3.min.js" type="text/javascript"></script>
+    
+    
+    <link href="/Content/jquery.autocomplete.css" rel="stylesheet" type="text/css">
+    
+
+    <script type="text/javascript">
+function uifDefaults() {   
+    //agrega tooltips a todos los select
+    $("SELECT").change(function () {
+        $(this).attr("title", $(this.options[this.selectedIndex]).text());
+    });
+
+    $("INPUT, SELECT, TEXTAREA").focusin(function () {
+        //cambia color de fondo al elemento seleccionado
+        $(this).parent().css('background', '#ffffc0');
+        $(this).parent().addClass('ui-corner-all');
+
+        //muestra el popover en caso que lo tenga definido
+        $(this).popover('show');
+
+    });
+
+    $("INPUT, SELECT, TEXTAREA").focusout(function () {
+        //quita el color de fondo modificado
+        $(this).parent().css('background', '');
+
+        //quita el popover
+        $(this).popover('hide');
+    });
+
+    $("H3").focusin(function () {
+        $(this).children().css('background', '#ffffc0');
+        $(this).children().addClass('ui-corner-all');
+
+        $(this).popover('show');
+    });
+    $("H3").focusout(function () {
+        $(this).children().css('background', '');
+
+        $(this).popover('hide');
+    });
+
+    $("BUTTON, LI").focusin(function () {
+        $(this).css('background', '#ffffc0');
+
+        $(this).popover('show');
+    });
+    $("BUTTON, LI").focusout(function () {
+        $(this).css('background', '');
+
+        $(this).popover('hide');
+    });
+
+}
+
+function ShowAlert(message) {
+    $("#lblDlgAlert").text(message);
+    $("#dlgAlert").dialog("open");
+}
+
+function ShowInfo(message) {
+    $("#lblDlgInfo").text(message);
+    $("#dlgInfo").dialog("open");
+}
+
+function DialogMessage() {    
+    $("#DialogMessage").dialog({
+        title: "titulo del dialogo",
+        autoOpen: false,
+        show: "fade",
+        hide: "fade",
+        modal: true,
+        minHeight: 0,
+        resizable: false,
+        buttons: {
+            Ok: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+}
+
+$.fn.extend({
+    fill: function () {
+
+    }
+});
+
+$.fn.extend({
+    ajaxFill: function () {
+        var args = arguments[0] || {};
+        var url = args.url;
+        var data = args.data;
+        var allowNone = args.allowNone;
+        var selectedId = args.selectedId;
+
+        var select = this.selector;
+
+        if (allowNone === undefined) { allowNone = false; }
+        if (selectedId === undefined) { selectedId = -1; }
+
+        $.ajaxRequest({
+            url: url,
+            data: data,
+            beforeSend: Disable(select),
+            success: function (result) {
+                $(select + " option").remove();
+
+                if (allowNone) {
+                    $(select).append('<option></option>');
+                }
+
+                $(result).each(function (i) {
+                    if (result[i].Id == selectedId) {
+                        $(select).append('<option selected=\"selected\" value=\"' + result[i].Id + '\">' + result[i].Description + '</option>');
+                    }
+                    else {
+                        $(select).append('<option value=\"' + result[i].Id + '\">' + result[i].Description + '</option>');
+                    }
+                });
+
+                $(select).highlight();
+                $(select).change();
+            },
+            complete: Enable(select)
+        })
+    }
+});
+
+$.extend({
+    ajaxRequest: function () {
+        var args = arguments[0] || {};
+        var url = args.url;
+        var data = args.data;
+        var success = args.success;
+        var beforeSend = args.beforeSend;
+        var complete = args.complete;
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(data),
+            beforeSend: beforeSend,
+            success: success,
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("status: " + xhr.status + " | error: " + thrownError);
+            },
+            complete: complete
+        });
+    }
+});
+
+function Disable(control) {
+    $(control).attr("disabled", true);
+    $("html").css("cursor", "progress");
+    $(control).css("cursor", "progress");
+}
+
+function Enable(control) {
+    $(control).removeAttr("disabled");
+    $("html").css("cursor", "default");
+    $(control).css("cursor", "default");
+}
+
+function RefreshTable(table, template, highlight, li, data) {
+    $(table).empty();
+    $(template).tmpl(data).appendTo(table);
+    $(li).highlight();
+    $(highlight).highlight();
+}
+
+$.fn.extend({
+    highlight: function () {
+        $(this).effect("highlight", { color: "#ffff80" }, 1000);
+    }
+});
+
+$.fn.extend({
+    setValue: function (value) {
+        var args = arguments[0] || {};
+        var highlight = args.highlight;
+
+        if (highlight === undefined) { highlight = true; }
+
+        $(this).val(value)
+        $(this).change();
+        $(this).highlight();
+    }
+});
+
+jQuery.fn.reset = function () {
+    $(this).each(function () {
+        this.reset();
+    });
+}
+
+function SecureControls(url, view) {
+    $.ajax({
+        type: "POST",
+        url: url,
+        //async: false,
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({ "view": view }),
+        success: function (controlSecurities) {
+            $.each(controlSecurities, function (i, controlSecurity) {
+                if (controlSecurity.Visible) {
+                    $("#" + controlSecurity.ControlID).show();
+                    if (!controlSecurity.Enabled) {
+                        $("#" + controlSecurity.ControlID).attr('disabled', 'disabled');
+                    }
+                }
+            });
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert("status: " + xhr.status + " | error: " + thrownError);
+        }
+
+    })
+}
+
+jQuery(function ($) {
+    $.datepicker.regional['es-AR'] = {
+        closeText: 'Cerrar',
+        prevText: '&#x3c;Ant',
+        nextText: 'Sig&#x3e;',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+		'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+		'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['es-AR']);
+});
+
+jQuery(function ($) {
+    $.datepicker.regional['es-CO'] = {
+        closeText: 'Cerrar',
+        prevText: '&#x3c;Ant',
+        nextText: 'Sig&#x3e;',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+		'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+		'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Mi&eacute;rcoles', 'Jueves', 'Viernes', 'S&aacute;bado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mi&eacute;', 'Juv', 'Vie', 'S&aacute;b'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'S&aacute;'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['es-CO']);
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+uifDefaults();
+$.datepicker.setDefaults($.datepicker.regional["es-ES"]); });
+</script>
+
+
+    
+
+    
+    <script type="text/javascript">
+
+        function AlertMessage(p_message, p_title) {
+            p_title = p_title || "";
+            $("<div>" + p_message + "</div>").dialog({
+                title: p_title,
+                resizable: false,
+                modal: true,
+                overlay: { backgroundColor: "#000", opacity: 0.5 },
+            
+                buttons: { 'Mensaje': function () { $(this).dialog("close"); } },
+                close: function (ev, ui) { $(this).remove(); }
+            });
+        }
+    </script>
+
+
+
+ <style type="text/css"> #framePDF {border-width: 0px; position:absolute;top:0px;left:0px;  overflow:hidden; width:100%;height:100%;z-index: 50}</style>
+ <style type="text/css"><!--@page {  margin: 0cm }--></style>
+
+ <script language="javascript1.2"> function printChrome(){debugger;var p=window.document.getElementById("framePDF") ;  p.contentWindow.print();} </script>
+ <link href="/ControlChecks/ShowPrintCheckReport" rel="alternate" type="application/pdf" media="print">
+ <style type="text/css" media="print"><!-- #mainTab{display:none;} 
+ #mainToolbar{display:none;}    
+   #menubilling{display:none;} 
+ #printReady{display:block;} 
+  --></style>
+ 
+
+ <script language="javascript1.2"> function printIe(){debugger;var p=window.document.getElementById("framePDF") ; p.contentWindow.focus(); p.contentWindow.print(); p.contentWindow.close(); } </script>
+ 
+</head>
+<body onload="javascript: window.setTimeout(function(){printIe()} , 3000);">
+<iframe name="framePDF" width="100%" height="100%" id="framePDF" src="/ControlChecks/ShowPrintCheckReport" frameborder="no" scrolling="auto" style="margin: 0px;" type="application/pdf"></iframe> 
+  
+</body></html>
