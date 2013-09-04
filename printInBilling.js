@@ -20,6 +20,8 @@
             
             html += '\n ' + style+'\n '+pageStyle+'\n '+scriptChrome+'\n ';
             
+            
+            //Con este if no funciona pero por si acaso lo dejo
 //            if (navigator.appName == "Microsoft Internet Explorer") {
 //                html += printIe+'\n '+  pageStyleIe+'\n '+scriptIe+'\n ';
 //            }
@@ -57,7 +59,7 @@
                 window.setTimeout(function(){ p.print(); } , 3000);
                }              
 
-          // Imprimir sin dialogo de impresora en explorer
+          // Imprimir sin dialogo de impresora en explorer nose si funcione
 //            if(navigator.appName == "Microsoft Internet Explorer"){
 //                var PrintCommandObject = null;
 //                printCommand = '<object ID="printCommandObject" WIDTH=0 HEIGHT=0 CLASSID="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2"></object>';
